@@ -21,27 +21,27 @@
   </head>
   <body>
     <header class="toolbar">
-      <strong>Oracle ERP Query Console (UI Mock)</strong>
-      <button id="saveBtn" class="btn-fancy-save" aria-label="Save">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.83a2 2 0 0 0-.59-1.41l-1.83-1.83A2 2 0 0 0 17 3zM7 5h9v4H7V5zm10 14H7v-6h10v6z"></path>
-        </svg>
-      </button>
-      <button id="runBtn" class="btn-fancy btn-fancy-run" aria-label="Run">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-        <span id="runSpinner" class="spinner" aria-hidden="true"></span>
-      </button>
-      <button id="cancelBtn" class="btn-fancy btn-fancy-stop" aria-label="Cancel" disabled>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg>
-      </button>
+      <strong>Oracle ERP Query Console</strong>
+      <div class="env-controls">
+        <select id="envSelect" title="Select environment">
+          <option value="">Select</option>
+        </select>
+        <button id="envManageBtn" class="btn-fancy-mini" title="Manage environments"><span class="icon-ch">＋</span></button>
+      </div>
       <span id="statusText">Idle</span>
       <div class="right-controls">
-        <div class="env-controls">
-          <select id="envSelect" title="Select environment">
-            <option value="">Select</option>
-          </select>
-          <button id="envManageBtn" class="btn-fancy-mini" title="Manage environments"><span class="icon-ch">＋</span></button>
-        </div>
+        <button id="runBtn" class="btn-fancy btn-fancy-run" aria-label="Execute Query" title="Execute Query">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          <span id="runSpinner" class="spinner" aria-hidden="true"></span>
+        </button>
+        <button id="cancelBtn" class="btn-fancy btn-fancy-stop" aria-label="Cancel Execution" title="Cancel Execution" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg>
+        </button>
+        <button id="saveBtn" class="btn-fancy-save" aria-label="Save as File" title="Save as File">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.83a2 2 0 0 0-.59-1.41l-1.83-1.83A2 2 0 0 0 17 3zM7 5h9v4H7V5zm10 14H7v-6h10v6z"></path>
+          </svg>
+        </button>
       </div>
     </header>
 
@@ -88,6 +88,7 @@
           <div class="rowcount"><span class="label">Rows:</span><span id="rowCountValue" class="count-badge">0</span></div>
           <span id="lastRunInfo" class="last-run muted">Last run: —</span>
         </div>
+        <span id="utilityStatus" class="utility-status"></span>
         <div class="right-group">
           <button id="autoSizeBtn" class="btn-fancy-mini" title="Auto-size columns"><span class="icon-ch">↔</span></button>
           <button id="fitColumnsBtn" class="btn-fancy-mini" title="Fit columns to viewport"><span class="icon-ch">⇔</span></button>

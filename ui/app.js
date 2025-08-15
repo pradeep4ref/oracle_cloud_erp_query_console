@@ -36,8 +36,20 @@ const splitter = document.getElementById('splitter');
 const editorEl = document.getElementById('editorContainer');
 const toolbarEl = document.querySelector('header.toolbar');
 const mainEl = document.querySelector('main');
+const utilityStatusEl = document.getElementById('utilityStatus');
 
 function setStatus(text) { statusText.textContent = text; }
+
+// Utility status messaging
+function showUtilityStatus(message, type = 'info', duration = 3000) {
+  utilityStatusEl.textContent = message;
+  utilityStatusEl.className = `utility-status show ${type}`;
+  
+  // Auto-hide after duration
+  setTimeout(() => {
+    utilityStatusEl.classList.remove('show');
+  }, duration);
+}
 
 function setRunning(running) {
   isRunning = running;
@@ -121,7 +133,7 @@ function initMonaco() {
       ].join('\n'),
       language: 'sql',
       theme: 'vs-dark',
-      fontSize: 14,
+      fontSize: 16,
       fontFamily: 'Courier New, Courier, monospace',
       minimap: { enabled: false },
       automaticLayout: true,
@@ -165,8 +177,12 @@ function onSplitterUp() {
 }
 
 function onExportCsv() {
-  if (!gridApi) return;
+  if (!gridApi) {
+    showUtilityStatus('No Data To Export', 'warning');
+    return;
+  }
   gridApi.exportDataAsCsv({ suppressQuotes: true, fileName: 'results.csv' });
+  showUtilityStatus('CSV Exported Successfully', 'success');
 }
 
 async function onSave() {
@@ -196,18 +212,34 @@ async function onSave() {
       setTimeout(() => saveBtn.classList.remove('flash'), 750);
     }
   } catch (err) {
+    // Handle user cancellation gracefully
+    if (err.name === 'AbortError' || err.message?.includes('aborted') || err.message?.includes('cancelled')) {
+      setStatus('Save Cancelled');
+      return;
+    }
     console.error('Save failed', err);
     setStatus('Save error');
   }
 }
 
 function onAutoSize() {
-  if (!gridApi) return;
+  if (!gridApi) {
+    showUtilityStatus('No Data To Auto-Size', 'warning');
+    return;
+  }
   const allCols = [];
   gridApi.getColumnDefs().forEach((c) => allCols.push(c.field));
   gridApi.autoSizeColumns(allCols, false);
+  showUtilityStatus('Columns Auto-Sized', 'success');
 }
-function onFitColumns() { gridApi?.sizeColumnsToFit(); }
+function onFitColumns() { 
+  if (!gridApi) {
+    showUtilityStatus('No Data To Fit Columns', 'warning');
+    return;
+  }
+  gridApi.sizeColumnsToFit();
+  showUtilityStatus('Columns Fitted To Viewport', 'success');
+}
 
 // Default to less-dense rows; toggle makes them denser
 let dense = false;
@@ -217,10 +249,20 @@ function applyDensity() {
   document.documentElement.style.setProperty('--ag-header-height', dense ? '32px' : '40px');
   gridApi?.refreshHeader();
 }
-function onToggleDensity() { dense = !dense; applyDensity(); }
+function onToggleDensity() { 
+  dense = !dense; 
+  applyDensity();
+  showUtilityStatus(`Density: ${dense ? 'Compact' : 'Comfortable'}`, 'success');
+}
 
-function onResetLayout() { onFitColumns(); }
-function onClearResults() { updateGrid([]); }
+function onResetLayout() { 
+  onFitColumns();
+  showUtilityStatus('Layout Reset', 'success');
+}
+function onClearResults() { 
+  updateGrid([]);
+  showUtilityStatus('Results Cleared', 'success');
+}
 
 // Wire up buttons
 runBtn.addEventListener('click', onRun);
@@ -303,7 +345,7 @@ async function renderEnvList() {
   envList.innerHTML = '';
   const envs = await getEnvironments();
   // populate dropdown
-  envSelect.innerHTML = '<option value="">Select env</option>';
+  envSelect.innerHTML = '<option value="">Environment</option>';
   envs.forEach((env, idx) => {
     const opt = document.createElement('option');
     opt.value = String(idx);
@@ -351,6 +393,20 @@ envSaveBtn.addEventListener('click', async () => {
   await renderEnvList();
   setStatus('Environment saved');
 });
+
+// Initialize the application
+async function initApp() {
+  initGrid();
+  initMonaco();
+  await renderEnvList(); // Load existing environments on startup
+}
+
+// Start the app when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
 
 
 

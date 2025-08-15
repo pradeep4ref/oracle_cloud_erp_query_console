@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Oracle ERP Query Console (UI Mock)</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2.0.6/css/pico.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-grid.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-quartz.css"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="toolbar">
+      <strong>Oracle ERP Query Console (UI Mock)</strong>
+      <button id="saveBtn" class="btn-fancy-save" aria-label="Save">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.83a2 2 0 0 0-.59-1.41l-1.83-1.83A2 2 0 0 0 17 3zM7 5h9v4H7V5zm10 14H7v-6h10v6z"></path>
+        </svg>
+      </button>
+      <button id="runBtn" class="btn-fancy btn-fancy-run" aria-label="Run">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        <span id="runSpinner" class="spinner" aria-hidden="true"></span>
+      </button>
+      <button id="cancelBtn" class="btn-fancy btn-fancy-stop" aria-label="Cancel" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg>
+      </button>
+      <span id="statusText">Idle</span>
+      <div class="right-controls">
+        <div class="env-controls">
+          <select id="envSelect" title="Select environment">
+            <option value="">Select</option>
+          </select>
+          <button id="envManageBtn" class="btn-fancy-mini" title="Manage environments"><span class="icon-ch">＋</span></button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Environments Modal -->
+      <div id="envModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-header">
+            <strong>Environments</strong>
+            <button id="envCloseBtn" class="btn-fancy-mini" title="Close"><span class="icon-ch">✕</span></button>
+          </div>
+          <div id="envManage" class="modal-section">
+            <div class="env-form">
+              <label>Application Name
+                <input id="envName" type="text" placeholder="e.g., ERP Prod" />
+              </label>
+              <label>URL
+                <input id="envUrl" type="url" placeholder="https://example.oraclecloud.com" />
+              </label>
+              <label>Username
+                <input id="envUser" type="text" placeholder="user.name@company.com" />
+              </label>
+              <label>Password
+                <input id="envPwd" type="password" placeholder="Enter password" />
+              </label>
+              <div class="row-actions">
+                <button id="envSaveBtn" class="btn-fancy-mini accent-blue" title="Save environment"><span class="icon-ch">💾</span></button>
+                <button id="envClearFormBtn" class="btn-fancy-mini" title="Clear form"><span class="icon-ch">⟲</span></button>
+              </div>
+            </div>
+            <hr/>
+            <div>
+              <div class="list-header">Saved Environments</div>
+              <ul id="envList" class="env-list"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section id="editorContainer"></section>
+      <div id="splitter" title="Drag to resize"></div>
+      <div id="gridToolbar">
+        <div class="left-group">
+          <div class="rowcount"><span class="label">Rows:</span><span id="rowCountValue" class="count-badge">0</span></div>
+          <span id="lastRunInfo" class="last-run muted">Last run: —</span>
+        </div>
+        <div class="right-group">
+          <button id="autoSizeBtn" class="btn-fancy-mini" title="Auto-size columns"><span class="icon-ch">↔</span></button>
+          <button id="fitColumnsBtn" class="btn-fancy-mini" title="Fit columns to viewport"><span class="icon-ch">⇔</span></button>
+          <button id="densityBtn" class="btn-fancy-mini" title="Toggle density"><span class="icon-ch">≋</span></button>
+          <button id="resetLayoutBtn" class="btn-fancy-mini" title="Reset layout"><span class="icon-ch">⟲</span></button>
+          <button id="clearBtn" class="btn-fancy-mini accent-red" title="Clear results"><span class="icon-ch">🗑</span></button>
+          <button id="exportCsvBtn" class="btn-fancy-mini accent-blue" title="Export CSV" disabled><span class="icon-ch">⭳</span></button>
+        </div>
+      </div>
+      <section id="gridContainer" class="ag-theme-quartz">
+        <div id="grid" style="width: 100%; height: 100%"></div>
+      </section>
+    </main>
+
+    <!-- AG Grid (UMD) -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.3.2/dist/ag-grid-community.noStyle.js"></script>
+    <!-- Monaco Loader -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
+    <script src="./app.js"></script>
+   </body>
+   </html>
+
+
